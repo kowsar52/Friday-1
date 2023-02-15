@@ -3,10 +3,6 @@ const ConnectApp = require("../Model/ConnectedApp");
 const User = require('../Model/User');
 
 const StripeData = async(availableApp,connectedApp,id) => {
-    // console.log("🚀 ~ file: Stripe.js:5 ~ StripeData ~ id", id)
-    // console.log("🚀 ~ file: Stripe.js:5 ~ StripeData ~ availableApp", availableApp)
-    // console.log("🚀 ~ file: Stripe.js:5 ~ StripeData ~ connectedApp", connectedApp)
-
     const user = await User.findOne({_id:id})
     if(connectedApp.length <= 0){
         console.log("first inside block")
