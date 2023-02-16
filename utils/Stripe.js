@@ -1,4 +1,4 @@
-const stripe = require('stripe')('sk_test_51LXJpASAuIUQMsyA4WGDZt3ZmzlojxYTSFkYBZVOLR6xIxqHLV6UdgrNlvxB2OkR9XglObDeWzCyN9zkoN26DFEM00q5byfGmu');
+const stripe = require('stripe')(process.env.STRIPE_TEST_SECRET_KEY);
 const ConnectApp = require("../Model/ConnectedApp");
 const User = require('../Model/User');
 

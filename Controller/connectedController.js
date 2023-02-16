@@ -3,6 +3,10 @@ const ErrorHandler = require("../utils/errorHandling");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const App = require("../Model/App");
 
+const stripe = require('stripe')(process.env.STRIPE_TEST_SECRET_KEY);
+// For Live Mode
+// const stripe = require('stripe')(process.env.STRIPE_LIVE_SECRET_KEY);
+
 const OAuthClient = require("intuit-oauth");
 
 exports.addConection = catchAsyncError(async (req, res) => {
@@ -19,6 +23,32 @@ exports.addConection = catchAsyncError(async (req, res) => {
     .status(201)
     .json({ success: true, message: "App Connected Successfully" });
 });
+
+exports.createPayment = async (req, res) => {
+  try {
+    const paymentIntent = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price_data: {
+              currency: req.body.currency,
+              product_data: {
+                name: req.body.product_name
+              },
+              unit_amount: req.body.amount,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: req.body.mode,
+        success_url: req.body.success_url,
+        cancel_url: req.body.cancel_url,
+    });
+    res.status(200).send({ paymentIntent: paymentIntent.url })
+  } catch (err) {
+    console.log(err)
+    res.status(400).send(err)
+  }
+};
 
 exports.getUserConnect = catchAsyncError(async (req, res) => {
   const { _id } = req.user;
@@ -51,7 +81,7 @@ exports.getApp = catchAsyncError(async (req, res) => {
         const account = await stripe.accounts.create({
           type: "custom",
           country: "US",
-          email: user.email,
+          email: req.user.email,
           capabilities: {
             card_payments: { requested: true },
             transfers: { requested: true },
