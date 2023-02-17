@@ -3,7 +3,7 @@ const ErrorHandler = require("../utils/errorHandling");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const App = require("../Model/App");
 
-const stripe = require('stripe')(process.env.STRIPE_TEST_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
 // For Live Mode
 // const stripe = require('stripe')(process.env.STRIPE_LIVE_SECRET_KEY);
 
@@ -27,26 +27,26 @@ exports.addConection = catchAsyncError(async (req, res) => {
 exports.createPayment = async (req, res) => {
   try {
     const paymentIntent = await stripe.checkout.sessions.create({
-        line_items: [
-          {
-            price_data: {
-              currency: req.body.currency,
-              product_data: {
-                name: req.body.product_name
-              },
-              unit_amount: req.body.amount,
+      line_items: [
+        {
+          price_data: {
+            currency: req.body.currency,
+            product_data: {
+              name: req.body.product_name,
             },
-            quantity: 1,
+            unit_amount: req.body.amount,
           },
-        ],
-        mode: req.body.mode,
-        success_url: req.body.success_url,
-        cancel_url: req.body.cancel_url,
+          quantity: 1,
+        },
+      ],
+      mode: req.body.mode,
+      success_url: req.body.success_url,
+      cancel_url: req.body.cancel_url,
     });
-    res.status(200).send({ paymentIntent: paymentIntent.url })
+    res.status(200).send({ paymentIntent: paymentIntent.url });
   } catch (err) {
-    console.log(err)
-    res.status(400).send(err)
+    console.log(err);
+    res.status(400).send(err);
   }
 };
 
@@ -113,37 +113,38 @@ exports.getApp = catchAsyncError(async (req, res) => {
           .json({ sucess: false, message: "App is alerdyCreated" });
       }
     } else if (availableApp.name === "Quick Books") {
-        const authUri = oauthClient.authorizeUri({
-            scope: [OAuthClient.scopes.Accounting, OAuthClient.scopes.OpenId],
-            state: 'testState',
-          }); 
-          
-    
-          const parseRedirect = authUri.url;
-          const authToken = '';
-    
-          oauthClient
-            .createToken(parseRedirect)
-            .then(function (authResponse) {
-                console.log('The Token is  ' + JSON.stringify(authResponse.getJson()));
-                authToken = authResponse.getJson();
-            })
-            .catch(function (e) {
-                console.error('The error message is :' + e.originalMessage);
-                console.error(e.intuit_tid);
-            });
-    
-          var QuickBooks = require('node-quickbooks')
-    
-          const oauthClient = new OAuthClient({
-            authmode: "oauth2",
-            clientId: "ABh9JbwlY0i1N40oXrl05mTT02ThphQwy6AZfHccYHeBaZe1mm",
-            clientSecret: "G6jlLsMiQyB5yWNmZnW2XE5GG8YQSMS6Rm5Uauu0",
-            environment: "sandbox" || "production",
-            redirectUri: "https://127.0.0.1/user/apps/quickbooks/sucess",
-            scope: "com.intuit.quickbooks.accounting",
-            basUrl: "development",
-          });
+      const authUri = oauthClient.authorizeUri({
+        scope: [OAuthClient.scopes.Accounting, OAuthClient.scopes.OpenId],
+        state: "testState",
+      });
+
+      const parseRedirect = authUri.url;
+      const authToken = "";
+
+      oauthClient
+        .createToken(parseRedirect)
+        .then(function (authResponse) {
+          console.log(
+            "The Token is  " + JSON.stringify(authResponse.getJson())
+          );
+          authToken = authResponse.getJson();
+        })
+        .catch(function (e) {
+          console.error("The error message is :" + e.originalMessage);
+          console.error(e.intuit_tid);
+        });
+
+      var QuickBooks = require("node-quickbooks");
+
+      const oauthClient = new OAuthClient({
+        authmode: "oauth2",
+        clientId: process.env.OAUTHCLIENT_ID,
+        clientSecret: process.env.OAUTHCLIENT_SECRET,
+        environment: "sandbox" || "production",
+        redirectUri: process.env.OAUTH_REDIRECT_URL,
+        scope: "com.intuit.quickbooks.accounting",
+        basUrl: process.env.BASE_URL,
+      });
     }
   } else {
     //  Inside this section user's data is available in App Table.
@@ -185,38 +186,37 @@ exports.getApp = catchAsyncError(async (req, res) => {
           .json({ sucess: false, message: "App is alerdyCreated" });
       }
     } else if (availableApp.name === "Quick Books") {
-
-        
       const authUri = oauthClient.authorizeUri({
         scope: [OAuthClient.scopes.Accounting, OAuthClient.scopes.OpenId],
-        state: 'testState',
-      }); 
-      
+        state: "testState",
+      });
 
       const parseRedirect = authUri.url;
-      const authToken = '';
+      const authToken = "";
 
       oauthClient
         .createToken(parseRedirect)
         .then(function (authResponse) {
-            console.log('The Token is  ' + JSON.stringify(authResponse.getJson()));
-            authToken = authResponse.getJson();
+          console.log(
+            "The Token is  " + JSON.stringify(authResponse.getJson())
+          );
+          authToken = authResponse.getJson();
         })
         .catch(function (e) {
-            console.error('The error message is :' + e.originalMessage);
-            console.error(e.intuit_tid);
+          console.error("The error message is :" + e.originalMessage);
+          console.error(e.intuit_tid);
         });
 
-      var QuickBooks = require('node-quickbooks')
+      var QuickBooks = require("node-quickbooks");
 
       const oauthClient = new OAuthClient({
         authmode: "oauth2",
-        clientId: "ABh9JbwlY0i1N40oXrl05mTT02ThphQwy6AZfHccYHeBaZe1mm",
-        clientSecret: "G6jlLsMiQyB5yWNmZnW2XE5GG8YQSMS6Rm5Uauu0",
+        clientId: process.env.OAUTHCLIENT_ID,
+        clientSecret: process.env.OAUTHCLIENT_SECRET,
         environment: "sandbox" || "production",
-        redirectUri: "https://127.0.0.1/user/apps/quickbooks/sucess",
+        redirectUri: process.env.OAUTH_REDIRECT_URL,
         scope: "com.intuit.quickbooks.accounting",
-        basUrl: "development",
+        basUrl: process.env.BASE_URL,
       });
     }
   }
