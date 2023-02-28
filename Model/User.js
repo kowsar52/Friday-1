@@ -19,7 +19,6 @@ const userModel = mongoose.Schema({
     },
     phone:{
         type:String,
-        required:[true,"Phone Number is required"]
     },
     total_app:{
         type:String,

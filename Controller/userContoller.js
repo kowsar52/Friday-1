@@ -11,7 +11,7 @@ const Token = (user) =>{
 }
 
 exports.Register = catchAsyncError(async(req,res) =>{
-    const {name,email,password,phone,total_app} = req.body;
+    const {name,email,password,total_app} = req.body;
     
         const emailalreday = await User.findOne({email});
         
@@ -22,12 +22,12 @@ exports.Register = catchAsyncError(async(req,res) =>{
         const hashedPassword = await bcrypt.hash( password,10)
 
         const user = await User.create({
-            name,email,password:hashedPassword,phone,total_app
+            name,email,password:hashedPassword
         });
 
         const token = Token(user);
         
-        res.status(201).json({success:true,message:"User Registered sucessfully..",token});
+        res.status(201).json({success:true,message:"User Registered sucessfully..",token,user});
     
 })
 
@@ -49,7 +49,7 @@ exports.Login = catchAsyncError(async(req,res) =>{
 
         const token = Token(user);
 
-        return res.status(200).json({success:true,message:"Login Successfully",token});
+        return res.status(200).json({success:true,message:"Login Successfully",token,user});
 })
 
 exports.userDetail = catchAsyncError(async(req,res) =>{

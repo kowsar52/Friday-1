@@ -76,7 +76,7 @@ exports.getApp = catchAsyncError(async (req, res) => {
     if (availableApp.name === "Stripe") {
       console.log("inside the Stripe book");
 
-      if (connectedApp.length <= 0) {
+      if (connectedApp.length) {
         console.log("first inside block");
         const account = await stripe.accounts.create({
           type: "custom",
@@ -90,7 +90,7 @@ exports.getApp = catchAsyncError(async (req, res) => {
         console.log("🚀 ~ file: Stripe.js:23 ~ StripeData ~ account", account);
 
         const createConntcedapp = await ConnectApp.create({
-          userId: user._id,
+          userId: req.user._id,
           appId: availableApp._id,
           extra: account.id,
         });
